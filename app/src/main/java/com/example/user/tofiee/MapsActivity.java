@@ -265,6 +265,8 @@ public class MapsActivity extends AppCompatActivity implements ConstantInterface
     }
     public void searchLocation(View view) //btnSearchDestination Click
     {
+
+        googleMap.clear();
         EditText locationSearch = (EditText) findViewById(R.id.searchDest);
         String location = locationSearch.getText().toString();
         List<Address> addressList = null;
