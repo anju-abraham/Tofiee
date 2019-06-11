@@ -17,7 +17,7 @@ public class AppUtility implements ConstantInterface {
 
 
 
-    // Check weather google play services is available or not.
+    // Check whether google play services is available or not.
     public boolean checkPlayServices() {
 
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();

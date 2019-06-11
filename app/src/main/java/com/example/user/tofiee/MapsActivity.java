@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,8 +31,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
@@ -258,7 +263,41 @@ public class MapsActivity extends AppCompatActivity implements ConstantInterface
             mapFragment.getMapAsync(this);
         }
     }
+    public void searchLocation(View view) //btnSearchDestination Click
+    {
+        EditText locationSearch = (EditText) findViewById(R.id.searchDest);
+        String location = locationSearch.getText().toString();
+        List<Address> addressList = null;
 
+        if (location != null || !location.equals("")) {
+            Geocoder geocoder = new Geocoder(this);
+            try {
+                addressList = geocoder.getFromLocationName(location, 1);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Address address = addressList.get(0);
+            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+            googleMap .addMarker(new MarkerOptions().position(latLng).title(location));
+            googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            //Toast.makeText(getApplicationContext(),address.getLatitude()+" "+address.getLongitude(),Toast.LENGTH_LONG).show();
+
+
+
+            //-------------------------+++++++++++++++++++++++++++++++++++++++++++++++++
+            GoogleDirection.withServerKey(getString(R.string.map_direction_key))
+                    .from(currentLatLng)
+                    .to(new LatLng(latLng.latitude, latLng.longitude))
+                    .transportMode(TransportMode.DRIVING)
+                    .execute(MapsActivity.this);
+
+            showDistance(latLng);
+
+            //-------------------------+++++++++++++++++++++++++++++++++++++++++++++++++
+
+        }
+    }
 
 
 }
